@@ -1,0 +1,15 @@
+{% extends 'index.html' %}
+
+{% block info %}
+  {% for k, v in img_info.items() %}
+    <h4>{{ k }}</h4>
+    <ol>
+      {% for data in v %}
+        <li>{{ data }}</li>
+      {% endfor %}
+    </ol>
+  {% endfor %}
+{% endblock %}
+
+
+
