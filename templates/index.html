@@ -8,6 +8,8 @@
     <p>Select an image: </p>
     <form action="/" method="post" enctype="multipart/form-data">
       <input type="file" name="image" required/>
+      <label for="link">url</label>
+      <input type="text" name="link" id="link">
       <button type="submit">Submit image</button>
     </form>
     {% block info %}

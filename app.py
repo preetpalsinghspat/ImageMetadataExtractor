@@ -1,6 +1,7 @@
 from flask import Flask, request, redirect, url_for, render_template
 from PIL import Image, IptcImagePlugin
 from PIL.ExifTags import TAGS
+import wget
 import os
 
 app = Flask(__name__)
@@ -9,13 +10,15 @@ app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        image = request.files['image']
+        image = request.files.get('image', None)
+        link = request.form.get('link', None)
+        if link:
+            wget.download(link)
         extension = image.filename.split('.')[-1]
         image.filename = f'image.{extension}'
         img_path = f'uploaded_files/{image.filename}'
         image.save(img_path)
         img = Image.open(img_path)
-
         img_data = dict()
         iptc_data = []
         exif_data = []
@@ -52,7 +55,10 @@ def index():
             for tag_id, data in exifdata.items():
                 tag = TAGS.get(tag_id, tag_id)
                 if isinstance(data, bytes):
-                    data = data.decode()
+                    try:
+                        data = data.decode()
+                    except UnicodeDecodeError as e:
+                        data = data
                 exif_data.append(f"{tag} :  {data}")
         img_data['iptc'] = iptc_data
         img_data['exif'] = exif_data
